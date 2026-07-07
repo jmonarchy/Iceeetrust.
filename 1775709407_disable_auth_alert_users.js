@@ -7,7 +7,7 @@ migrate((app) => {
           {
                 "autogeneratePattern": "[a-z0-9]{15}",
                 "hidden": false,
-                "id": "text7236017376",
+                "id": "text4260191921",
                 "max": 15,
                 "min": 15,
                 "name": "id",
@@ -20,7 +20,7 @@ migrate((app) => {
           },
           {
                 "hidden": false,
-                "id": "text1931625804",
+                "id": "text0051228242",
                 "name": "title",
                 "presentable": false,
                 "primaryKey": false,
@@ -34,36 +34,8 @@ migrate((app) => {
           },
           {
                 "hidden": false,
-                "id": "text2259529404",
-                "name": "community_name",
-                "presentable": false,
-                "primaryKey": false,
-                "required": true,
-                "system": false,
-                "type": "text",
-                "autogeneratePattern": "",
-                "max": 0,
-                "min": 0,
-                "pattern": ""
-          },
-          {
-                "hidden": false,
-                "id": "text2315397373",
-                "name": "story_content",
-                "presentable": false,
-                "primaryKey": false,
-                "required": true,
-                "system": false,
-                "type": "text",
-                "autogeneratePattern": "",
-                "max": 0,
-                "min": 0,
-                "pattern": ""
-          },
-          {
-                "hidden": false,
-                "id": "text0782456157",
-                "name": "testimonial_quote",
+                "id": "text0847769589",
+                "name": "description",
                 "presentable": false,
                 "primaryKey": false,
                 "required": false,
@@ -76,41 +48,21 @@ migrate((app) => {
           },
           {
                 "hidden": false,
-                "id": "text1950975191",
-                "name": "testimonial_author",
+                "id": "number4774367775",
+                "name": "funding_amount",
                 "presentable": false,
                 "primaryKey": false,
                 "required": false,
                 "system": false,
-                "type": "text",
-                "autogeneratePattern": "",
-                "max": 0,
-                "min": 0,
-                "pattern": ""
+                "type": "number",
+                "max": null,
+                "min": null,
+                "onlyInt": false
           },
           {
                 "hidden": false,
-                "id": "file8236899595",
-                "name": "story_image",
-                "presentable": false,
-                "primaryKey": false,
-                "required": false,
-                "system": false,
-                "type": "file",
-                "maxSelect": 1,
-                "maxSize": 20971520,
-                "mimeTypes": [
-                      "image/jpeg",
-                      "image/png",
-                      "image/gif",
-                      "image/webp"
-                ],
-                "thumbs": []
-          },
-          {
-                "hidden": false,
-                "id": "date7194317168",
-                "name": "published_date",
+                "id": "date5216934919",
+                "name": "deadline",
                 "presentable": false,
                 "primaryKey": false,
                 "required": false,
@@ -121,17 +73,51 @@ migrate((app) => {
           },
           {
                 "hidden": false,
-                "id": "bool9594199472",
-                "name": "featured",
+                "id": "text6030679068",
+                "name": "eligibility_criteria",
                 "presentable": false,
                 "primaryKey": false,
                 "required": false,
                 "system": false,
-                "type": "bool"
+                "type": "text",
+                "autogeneratePattern": "",
+                "max": 0,
+                "min": 0,
+                "pattern": ""
           },
           {
                 "hidden": false,
-                "id": "autodate5811483377",
+                "id": "text1922143195",
+                "name": "application_link",
+                "presentable": false,
+                "primaryKey": false,
+                "required": false,
+                "system": false,
+                "type": "text",
+                "autogeneratePattern": "",
+                "max": 0,
+                "min": 0,
+                "pattern": ""
+          },
+          {
+                "hidden": false,
+                "id": "select8345219399",
+                "name": "status",
+                "presentable": false,
+                "primaryKey": false,
+                "required": false,
+                "system": false,
+                "type": "select",
+                "maxSelect": 1,
+                "values": [
+                      "Open",
+                      "Closed",
+                      "Coming Soon"
+                ]
+          },
+          {
+                "hidden": false,
+                "id": "autodate6155428471",
                 "name": "created",
                 "onCreate": true,
                 "onUpdate": false,
@@ -141,7 +127,7 @@ migrate((app) => {
           },
           {
                 "hidden": false,
-                "id": "autodate1466956581",
+                "id": "autodate4356808010",
                 "name": "updated",
                 "onCreate": true,
                 "onUpdate": true,
@@ -150,10 +136,10 @@ migrate((app) => {
                 "type": "autodate"
           }
     ],
-    "id": "pbc_2443943509",
+    "id": "pbc_3713307800",
     "indexes": [],
     "listRule": "",
-    "name": "impact_stories",
+    "name": "grant_opportunities",
     "system": false,
     "type": "base",
     "updateRule": "@request.auth.collectionName = 'admins'",
@@ -171,7 +157,7 @@ migrate((app) => {
   }
 }, (app) => {
   try {
-    const collection = app.findCollectionByNameOrId("pbc_2443943509");
+    const collection = app.findCollectionByNameOrId("pbc_3713307800");
     return app.delete(collection);
   } catch (e) {
     if (e.message.includes("no rows in result set")) {

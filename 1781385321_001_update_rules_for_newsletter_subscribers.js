@@ -2,16 +2,16 @@
 migrate((app) => {
   const collection = app.findCollectionByNameOrId("donations");
 
-  const existing = collection.fields.getByName("usd_amount");
+  const existing = collection.fields.getByName("tzs_amount");
   if (existing) {
     if (existing.type === "number") {
       return; // field already exists with correct type, skip
     }
-    collection.fields.removeByName("usd_amount"); // exists with wrong type, remove first
+    collection.fields.removeByName("tzs_amount"); // exists with wrong type, remove first
   }
 
   collection.fields.add(new NumberField({
-    name: "usd_amount",
+    name: "tzs_amount",
     required: false,
     min: 0
   }));
@@ -20,7 +20,7 @@ migrate((app) => {
 }, (app) => {
   try {
     const collection = app.findCollectionByNameOrId("donations");
-    collection.fields.removeByName("usd_amount");
+    collection.fields.removeByName("tzs_amount");
     return app.save(collection);
   } catch (e) {
     if (e.message.includes("no rows in result set")) {

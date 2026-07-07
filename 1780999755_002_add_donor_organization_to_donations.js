@@ -1,13 +1,13 @@
 /// <reference path="../pb_data/types.d.ts" />
 migrate((app) => {
   const collection = new Collection({
-    "createRule": "@request.auth.collectionName = 'admins'",
+    "createRule": "",
     "deleteRule": "@request.auth.collectionName = 'admins'",
     "fields":     [
           {
                 "autogeneratePattern": "[a-z0-9]{15}",
                 "hidden": false,
-                "id": "text7236017376",
+                "id": "text0199914775",
                 "max": 15,
                 "min": 15,
                 "name": "id",
@@ -20,8 +20,8 @@ migrate((app) => {
           },
           {
                 "hidden": false,
-                "id": "text1931625804",
-                "name": "title",
+                "id": "text8076105231",
+                "name": "name",
                 "presentable": false,
                 "primaryKey": false,
                 "required": true,
@@ -34,8 +34,20 @@ migrate((app) => {
           },
           {
                 "hidden": false,
-                "id": "text2259529404",
-                "name": "community_name",
+                "id": "email7461968713",
+                "name": "email",
+                "presentable": false,
+                "primaryKey": false,
+                "required": true,
+                "system": false,
+                "type": "email",
+                "exceptDomains": [],
+                "onlyDomains": []
+          },
+          {
+                "hidden": false,
+                "id": "text2799247611",
+                "name": "phone",
                 "presentable": false,
                 "primaryKey": false,
                 "required": true,
@@ -48,22 +60,8 @@ migrate((app) => {
           },
           {
                 "hidden": false,
-                "id": "text2315397373",
-                "name": "story_content",
-                "presentable": false,
-                "primaryKey": false,
-                "required": true,
-                "system": false,
-                "type": "text",
-                "autogeneratePattern": "",
-                "max": 0,
-                "min": 0,
-                "pattern": ""
-          },
-          {
-                "hidden": false,
-                "id": "text0782456157",
-                "name": "testimonial_quote",
+                "id": "text9012574074",
+                "name": "skills",
                 "presentable": false,
                 "primaryKey": false,
                 "required": false,
@@ -76,62 +74,57 @@ migrate((app) => {
           },
           {
                 "hidden": false,
-                "id": "text1950975191",
-                "name": "testimonial_author",
+                "id": "select0500735640",
+                "name": "availability",
                 "presentable": false,
                 "primaryKey": false,
                 "required": false,
                 "system": false,
-                "type": "text",
-                "autogeneratePattern": "",
-                "max": 0,
-                "min": 0,
-                "pattern": ""
-          },
-          {
-                "hidden": false,
-                "id": "file8236899595",
-                "name": "story_image",
-                "presentable": false,
-                "primaryKey": false,
-                "required": false,
-                "system": false,
-                "type": "file",
+                "type": "select",
                 "maxSelect": 1,
-                "maxSize": 20971520,
-                "mimeTypes": [
-                      "image/jpeg",
-                      "image/png",
-                      "image/gif",
-                      "image/webp"
-                ],
-                "thumbs": []
+                "values": [
+                      "Full-time",
+                      "Part-time",
+                      "Weekends",
+                      "Flexible"
+                ]
           },
           {
                 "hidden": false,
-                "id": "date7194317168",
-                "name": "published_date",
+                "id": "select7586032907",
+                "name": "interests",
                 "presentable": false,
                 "primaryKey": false,
                 "required": false,
                 "system": false,
-                "type": "date",
-                "max": "",
-                "min": ""
+                "type": "select",
+                "maxSelect": 8,
+                "values": [
+                      "Community Education",
+                      "Economic Empowerment",
+                      "Financial Literacy",
+                      "Environmental Conservation",
+                      "Climate Change Adaptation",
+                      "Youth Development",
+                      "Women & Girls Empowerment",
+                      "Sustainable Agriculture"
+                ]
           },
           {
                 "hidden": false,
-                "id": "bool9594199472",
-                "name": "featured",
+                "id": "autodate5048284015",
+                "name": "signup_date",
                 "presentable": false,
                 "primaryKey": false,
                 "required": false,
                 "system": false,
-                "type": "bool"
+                "type": "autodate",
+                "onCreate": true,
+                "onUpdate": false
           },
           {
                 "hidden": false,
-                "id": "autodate5811483377",
+                "id": "autodate7334391201",
                 "name": "created",
                 "onCreate": true,
                 "onUpdate": false,
@@ -141,7 +134,7 @@ migrate((app) => {
           },
           {
                 "hidden": false,
-                "id": "autodate1466956581",
+                "id": "autodate7710428461",
                 "name": "updated",
                 "onCreate": true,
                 "onUpdate": true,
@@ -150,14 +143,14 @@ migrate((app) => {
                 "type": "autodate"
           }
     ],
-    "id": "pbc_2443943509",
+    "id": "pbc_7936292500",
     "indexes": [],
-    "listRule": "",
-    "name": "impact_stories",
+    "listRule": "@request.auth.collectionName = 'admins'",
+    "name": "volunteer_signups",
     "system": false,
     "type": "base",
     "updateRule": "@request.auth.collectionName = 'admins'",
-    "viewRule": ""
+    "viewRule": "@request.auth.collectionName = 'admins'"
   });
 
   try {
@@ -171,7 +164,7 @@ migrate((app) => {
   }
 }, (app) => {
   try {
-    const collection = app.findCollectionByNameOrId("pbc_2443943509");
+    const collection = app.findCollectionByNameOrId("pbc_7936292500");
     return app.delete(collection);
   } catch (e) {
     if (e.message.includes("no rows in result set")) {

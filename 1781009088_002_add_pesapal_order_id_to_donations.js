@@ -7,7 +7,7 @@ migrate((app) => {
           {
                 "autogeneratePattern": "[a-z0-9]{15}",
                 "hidden": false,
-                "id": "text7236017376",
+                "id": "text1178572605",
                 "max": 15,
                 "min": 15,
                 "name": "id",
@@ -20,7 +20,21 @@ migrate((app) => {
           },
           {
                 "hidden": false,
-                "id": "text1931625804",
+                "id": "text0754343708",
+                "name": "name",
+                "presentable": false,
+                "primaryKey": false,
+                "required": true,
+                "system": false,
+                "type": "text",
+                "autogeneratePattern": "",
+                "max": 0,
+                "min": 0,
+                "pattern": ""
+          },
+          {
+                "hidden": false,
+                "id": "text6279172917",
                 "name": "title",
                 "presentable": false,
                 "primaryKey": false,
@@ -34,36 +48,8 @@ migrate((app) => {
           },
           {
                 "hidden": false,
-                "id": "text2259529404",
-                "name": "community_name",
-                "presentable": false,
-                "primaryKey": false,
-                "required": true,
-                "system": false,
-                "type": "text",
-                "autogeneratePattern": "",
-                "max": 0,
-                "min": 0,
-                "pattern": ""
-          },
-          {
-                "hidden": false,
-                "id": "text2315397373",
-                "name": "story_content",
-                "presentable": false,
-                "primaryKey": false,
-                "required": true,
-                "system": false,
-                "type": "text",
-                "autogeneratePattern": "",
-                "max": 0,
-                "min": 0,
-                "pattern": ""
-          },
-          {
-                "hidden": false,
-                "id": "text0782456157",
-                "name": "testimonial_quote",
+                "id": "text6318511595",
+                "name": "bio",
                 "presentable": false,
                 "primaryKey": false,
                 "required": false,
@@ -76,22 +62,8 @@ migrate((app) => {
           },
           {
                 "hidden": false,
-                "id": "text1950975191",
-                "name": "testimonial_author",
-                "presentable": false,
-                "primaryKey": false,
-                "required": false,
-                "system": false,
-                "type": "text",
-                "autogeneratePattern": "",
-                "max": 0,
-                "min": 0,
-                "pattern": ""
-          },
-          {
-                "hidden": false,
-                "id": "file8236899595",
-                "name": "story_image",
+                "id": "file0959045291",
+                "name": "photo",
                 "presentable": false,
                 "primaryKey": false,
                 "required": false,
@@ -109,29 +81,32 @@ migrate((app) => {
           },
           {
                 "hidden": false,
-                "id": "date7194317168",
-                "name": "published_date",
+                "id": "email1262956987",
+                "name": "email",
                 "presentable": false,
                 "primaryKey": false,
                 "required": false,
                 "system": false,
-                "type": "date",
-                "max": "",
-                "min": ""
+                "type": "email",
+                "exceptDomains": [],
+                "onlyDomains": []
           },
           {
                 "hidden": false,
-                "id": "bool9594199472",
-                "name": "featured",
+                "id": "number0312798966",
+                "name": "order",
                 "presentable": false,
                 "primaryKey": false,
                 "required": false,
                 "system": false,
-                "type": "bool"
+                "type": "number",
+                "max": null,
+                "min": null,
+                "onlyInt": false
           },
           {
                 "hidden": false,
-                "id": "autodate5811483377",
+                "id": "autodate8701360889",
                 "name": "created",
                 "onCreate": true,
                 "onUpdate": false,
@@ -141,7 +116,7 @@ migrate((app) => {
           },
           {
                 "hidden": false,
-                "id": "autodate1466956581",
+                "id": "autodate6953365345",
                 "name": "updated",
                 "onCreate": true,
                 "onUpdate": true,
@@ -150,10 +125,10 @@ migrate((app) => {
                 "type": "autodate"
           }
     ],
-    "id": "pbc_2443943509",
+    "id": "pbc_6557984186",
     "indexes": [],
     "listRule": "",
-    "name": "impact_stories",
+    "name": "board_members",
     "system": false,
     "type": "base",
     "updateRule": "@request.auth.collectionName = 'admins'",
@@ -171,7 +146,7 @@ migrate((app) => {
   }
 }, (app) => {
   try {
-    const collection = app.findCollectionByNameOrId("pbc_2443943509");
+    const collection = app.findCollectionByNameOrId("pbc_6557984186");
     return app.delete(collection);
   } catch (e) {
     if (e.message.includes("no rows in result set")) {

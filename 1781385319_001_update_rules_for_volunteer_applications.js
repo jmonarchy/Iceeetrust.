@@ -7,7 +7,7 @@ migrate((app) => {
           {
                 "autogeneratePattern": "[a-z0-9]{15}",
                 "hidden": false,
-                "id": "text7236017376",
+                "id": "text0292407738",
                 "max": 15,
                 "min": 15,
                 "name": "id",
@@ -20,8 +20,8 @@ migrate((app) => {
           },
           {
                 "hidden": false,
-                "id": "text1931625804",
-                "name": "title",
+                "id": "text5481029755",
+                "name": "filename",
                 "presentable": false,
                 "primaryKey": false,
                 "required": true,
@@ -34,64 +34,8 @@ migrate((app) => {
           },
           {
                 "hidden": false,
-                "id": "text2259529404",
-                "name": "community_name",
-                "presentable": false,
-                "primaryKey": false,
-                "required": true,
-                "system": false,
-                "type": "text",
-                "autogeneratePattern": "",
-                "max": 0,
-                "min": 0,
-                "pattern": ""
-          },
-          {
-                "hidden": false,
-                "id": "text2315397373",
-                "name": "story_content",
-                "presentable": false,
-                "primaryKey": false,
-                "required": true,
-                "system": false,
-                "type": "text",
-                "autogeneratePattern": "",
-                "max": 0,
-                "min": 0,
-                "pattern": ""
-          },
-          {
-                "hidden": false,
-                "id": "text0782456157",
-                "name": "testimonial_quote",
-                "presentable": false,
-                "primaryKey": false,
-                "required": false,
-                "system": false,
-                "type": "text",
-                "autogeneratePattern": "",
-                "max": 0,
-                "min": 0,
-                "pattern": ""
-          },
-          {
-                "hidden": false,
-                "id": "text1950975191",
-                "name": "testimonial_author",
-                "presentable": false,
-                "primaryKey": false,
-                "required": false,
-                "system": false,
-                "type": "text",
-                "autogeneratePattern": "",
-                "max": 0,
-                "min": 0,
-                "pattern": ""
-          },
-          {
-                "hidden": false,
-                "id": "file8236899595",
-                "name": "story_image",
+                "id": "file8209303058",
+                "name": "file",
                 "presentable": false,
                 "primaryKey": false,
                 "required": false,
@@ -99,39 +43,65 @@ migrate((app) => {
                 "type": "file",
                 "maxSelect": 1,
                 "maxSize": 20971520,
-                "mimeTypes": [
-                      "image/jpeg",
-                      "image/png",
-                      "image/gif",
-                      "image/webp"
-                ],
+                "mimeTypes": [],
                 "thumbs": []
           },
           {
                 "hidden": false,
-                "id": "date7194317168",
-                "name": "published_date",
+                "id": "text2537780828",
+                "name": "uploadedBy",
+                "presentable": false,
+                "primaryKey": false,
+                "required": true,
+                "system": false,
+                "type": "text",
+                "autogeneratePattern": "",
+                "max": 0,
+                "min": 0,
+                "pattern": ""
+          },
+          {
+                "hidden": false,
+                "id": "autodate2578315379",
+                "name": "uploadedAt",
                 "presentable": false,
                 "primaryKey": false,
                 "required": false,
                 "system": false,
-                "type": "date",
-                "max": "",
-                "min": ""
+                "type": "autodate",
+                "onCreate": true,
+                "onUpdate": false
           },
           {
                 "hidden": false,
-                "id": "bool9594199472",
-                "name": "featured",
+                "id": "text5744416934",
+                "name": "fileType",
                 "presentable": false,
                 "primaryKey": false,
                 "required": false,
                 "system": false,
-                "type": "bool"
+                "type": "text",
+                "autogeneratePattern": "",
+                "max": 0,
+                "min": 0,
+                "pattern": ""
           },
           {
                 "hidden": false,
-                "id": "autodate5811483377",
+                "id": "number6107222398",
+                "name": "fileSize",
+                "presentable": false,
+                "primaryKey": false,
+                "required": false,
+                "system": false,
+                "type": "number",
+                "max": null,
+                "min": null,
+                "onlyInt": false
+          },
+          {
+                "hidden": false,
+                "id": "autodate7712763946",
                 "name": "created",
                 "onCreate": true,
                 "onUpdate": false,
@@ -141,7 +111,7 @@ migrate((app) => {
           },
           {
                 "hidden": false,
-                "id": "autodate1466956581",
+                "id": "autodate9397180233",
                 "name": "updated",
                 "onCreate": true,
                 "onUpdate": true,
@@ -150,14 +120,14 @@ migrate((app) => {
                 "type": "autodate"
           }
     ],
-    "id": "pbc_2443943509",
+    "id": "pbc_9363488690",
     "indexes": [],
-    "listRule": "",
-    "name": "impact_stories",
+    "listRule": "@request.auth.collectionName = 'admins'",
+    "name": "files",
     "system": false,
     "type": "base",
     "updateRule": "@request.auth.collectionName = 'admins'",
-    "viewRule": ""
+    "viewRule": "@request.auth.collectionName = 'admins'"
   });
 
   try {
@@ -171,7 +141,7 @@ migrate((app) => {
   }
 }, (app) => {
   try {
-    const collection = app.findCollectionByNameOrId("pbc_2443943509");
+    const collection = app.findCollectionByNameOrId("pbc_9363488690");
     return app.delete(collection);
   } catch (e) {
     if (e.message.includes("no rows in result set")) {
