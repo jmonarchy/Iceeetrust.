@@ -1,8 +1,19 @@
-const NodeEnv = {
-	Development: 'development',
-	Production: 'production',
-};
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteBase /
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteRule ^ index.html [L]
+</IfModule>
 
-const BodyLimit = 1024 * 1024 * 20;
+<IfModule mod_headers.c>
+	Header set X-Powered-By "Hostinger Horizons"
 
-export { NodeEnv, BodyLimit };
+	# Cache everything on CDN by default
+	Header set Cache-Control "public, s-maxage=604800, max-age=0"
+
+	# Cache in browser all assets
+	<If "%{REQUEST_URI} =~ m#^/assets/.*$#">
+		Header set Cache-Control "public, max-age=604800"
+	</If>
+</IfModule>

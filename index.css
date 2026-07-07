@@ -1,0 +1,306 @@
+import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { FileText, Download, Briefcase, Search, CheckCircle2 } from 'lucide-react';
+import { toast } from 'sonner';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import apiServerClient from '@/lib/apiServerClient';
+import pb from '@/lib/pocketbaseClient';
+
+const GrantMakerPortal = () => {
+  const [documents, setDocuments] = useState([]);
+  const [opportunities, setOpportunities] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const [proposalForm, setProposalForm] = useState({
+    project_name: '',
+    description: '',
+    budget: '',
+    timeline: '',
+    expected_impact: '',
+    submitter_name: '',
+    submitter_email: '',
+    submitter_organization: ''
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [docsRes, oppsRes] = await Promise.all([
+          pb.collection('documents').getFullList({ sort: '-created', $autoCancel: false }),
+          pb.collection('grant_opportunities').getFullList({ sort: '-created', $autoCancel: false })
+        ]);
+        setDocuments(docsRes);
+        setOpportunities(oppsRes);
+      } catch (error) {
+        console.error('Error fetching portal data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleProposalSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    try {
+      const response = await apiServerClient.fetch('/project-proposals', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...proposalForm,
+          budget: parseFloat(proposalForm.budget)
+        })
+      });
+      const data = await response.json();
+      if (data.success) {
+        toast.success('Proposal submitted successfully!');
+        setProposalForm({
+          project_name: '', description: '', budget: '', timeline: '',
+          expected_impact: '', submitter_name: '', submitter_email: '', submitter_organization: ''
+        });
+      } else {
+        throw new Error(data.message);
+      }
+    } catch (error) {
+      toast.error('Failed to submit proposal.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const filteredOpps = opportunities.filter(opp =>
+    opp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    opp.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const renderDocuments = (category) => {
+    const filtered = documents.filter(doc => doc.category === category);
+    if (filtered.length === 0) return <p className="text-muted-foreground text-sm py-4">No documents available in this category.</p>;
+
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        {filtered.map(doc => (
+          <div key={doc.id} className="flex items-center justify-between p-4 border rounded-lg bg-card hover:shadow-sm transition-all">
+            <div className="flex items-center gap-3">
+              <FileText className="w-8 h-8 text-primary/60" />
+              <div>
+                <p className="font-medium text-sm">{doc.title}</p>
+                <p className="text-xs text-muted-foreground">Updated: {new Date(doc.updated).toLocaleDateString()}</p>
+              </div>
+            </div>
+            {doc.file && (
+              <Button variant="ghost" size="icon" asChild>
+                <a href={pb.files.getURL(doc, doc.file)} target="_blank" rel="noopener noreferrer" download>
+                  <Download className="w-4 h-4" />
+                </a>
+              </Button>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  return (
+    <>
+      <Helmet>
+        <title>Grant Maker Portal - ICEEE TRUST</title>
+        <meta name="description" content="Partner with ICEEE TRUST to fund sustainable development projects." />
+      </Helmet>
+
+      <div className="min-h-screen flex flex-col">
+        <Header />
+
+        <main className="flex-grow bg-muted/20">
+          <section className="bg-primary text-primary-foreground py-16">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h1 className="text-4xl font-bold mb-4">Grant Maker Portal</h1>
+              <p className="text-xl text-primary-foreground/80 max-w-3xl">
+                Access project portfolios, funding opportunities, and organizational documents to support our mission.
+              </p>
+            </div>
+          </section>
+
+          <section className="py-12">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <Tabs defaultValue="opportunities" className="w-full">
+                <TabsList className="grid w-full grid-cols-1 md:grid-cols-4 h-auto gap-2 bg-transparent">
+                  <TabsTrigger value="opportunities" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border py-3">Funding Opportunities</TabsTrigger>
+                  <TabsTrigger value="documents" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border py-3">Organizational Documents</TabsTrigger>
+                  <TabsTrigger value="reports" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border py-3">M&E Reports</TabsTrigger>
+                  <TabsTrigger value="submit" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border py-3">Submit Proposal</TabsTrigger>
+                </TabsList>
+
+                <div className="mt-8">
+                  <TabsContent value="opportunities">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Current Funding Opportunities</CardTitle>
+                        <CardDescription>Explore areas where your funding can make an immediate impact.</CardDescription>
+                        <div className="relative mt-4 max-w-md">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                          <Input
+                            placeholder="Search opportunities..."
+                            className="pl-9"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                          />
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        {loading ? (
+                          <p>Loading opportunities...</p>
+                        ) : (
+                          <div className="space-y-6">
+                            {filteredOpps.map(opp => (
+                              <div key={opp.id} className="border rounded-xl p-6 hover:border-primary/50 transition-colors">
+                                <div className="flex justify-between items-start mb-4">
+                                  <div>
+                                    <h3 className="text-xl font-semibold text-primary">{opp.title}</h3>
+                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 mt-2">
+                                      {opp.status}
+                                    </span>
+                                  </div>
+                                  {opp.funding_amount && (
+                                    <div className="text-right">
+                                      <p className="text-sm text-muted-foreground">Target Funding</p>
+                                      <p className="text-lg font-bold">${opp.funding_amount.toLocaleString()}</p>
+                                    </div>
+                                  )}
+                                </div>
+                                <p className="text-muted-foreground mb-4">{opp.description}</p>
+                                {opp.eligibility_criteria && (
+                                  <div className="bg-muted p-4 rounded-lg mb-4">
+                                    <p className="text-sm font-semibold mb-1">Eligibility:</p>
+                                    <p className="text-sm text-muted-foreground">{opp.eligibility_criteria}</p>
+                                  </div>
+                                )}
+                                {opp.application_link && (
+                                  <Button asChild>
+                                    <a href={opp.application_link} target="_blank" rel="noopener noreferrer">Apply Now</a>
+                                  </Button>
+                                )}
+                              </div>
+                            ))}
+                            {filteredOpps.length === 0 && <p className="text-muted-foreground">No opportunities found.</p>}
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+
+                  <TabsContent value="documents">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Organizational Documents</CardTitle>
+                        <CardDescription>Download our core documents, strategic plans, and financial reports.</CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-8">
+                        <div>
+                          <h3 className="text-lg font-semibold border-b pb-2">Organizational Profiles & Strategy</h3>
+                          {renderDocuments('Organizational Profile')}
+                          {renderDocuments('Strategic Plan')}
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold border-b pb-2">Financial Reports & Audits</h3>
+                          {renderDocuments('Financial Report')}
+                          {renderDocuments('Audited Statement')}
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold border-b pb-2">Policies</h3>
+                          {renderDocuments('Policy')}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+
+                  <TabsContent value="reports">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Monitoring & Evaluation Reports</CardTitle>
+                        <CardDescription>Review the impact and outcomes of our completed and ongoing projects.</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        {renderDocuments('Annual Report')}
+                        {renderDocuments('Project Proposal')}
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+
+                  <TabsContent value="submit">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Submit a Project Proposal</CardTitle>
+                        <CardDescription>Partner with us by submitting your project proposal for review.</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <form onSubmit={handleProposalSubmit} className="space-y-6 max-w-3xl">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                              <Label htmlFor="project_name">Project Name *</Label>
+                              <Input id="project_name" required value={proposalForm.project_name} onChange={e => setProposalForm({ ...proposalForm, project_name: e.target.value })} />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="budget">Estimated Budget (USD) *</Label>
+                              <Input id="budget" type="number" required value={proposalForm.budget} onChange={e => setProposalForm({ ...proposalForm, budget: e.target.value })} />
+                            </div>
+                            <div className="space-y-2 md:col-span-2">
+                              <Label htmlFor="description">Project Description *</Label>
+                              <Textarea id="description" rows={4} required value={proposalForm.description} onChange={e => setProposalForm({ ...proposalForm, description: e.target.value })} />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="timeline">Proposed Timeline</Label>
+                              <Input id="timeline" placeholder="e.g., 12 months" value={proposalForm.timeline} onChange={e => setProposalForm({ ...proposalForm, timeline: e.target.value })} />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="expected_impact">Expected Impact</Label>
+                              <Input id="expected_impact" value={proposalForm.expected_impact} onChange={e => setProposalForm({ ...proposalForm, expected_impact: e.target.value })} />
+                            </div>
+
+                            <div className="md:col-span-2 mt-4">
+                              <h4 className="font-semibold mb-4 border-b pb-2">Submitter Information</h4>
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label htmlFor="submitter_name">Full Name *</Label>
+                              <Input id="submitter_name" required value={proposalForm.submitter_name} onChange={e => setProposalForm({ ...proposalForm, submitter_name: e.target.value })} />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="submitter_email">Email Address *</Label>
+                              <Input id="submitter_email" type="email" required value={proposalForm.submitter_email} onChange={e => setProposalForm({ ...proposalForm, submitter_email: e.target.value })} />
+                            </div>
+                            <div className="space-y-2 md:col-span-2">
+                              <Label htmlFor="submitter_organization">Organization Name</Label>
+                              <Input id="submitter_organization" value={proposalForm.submitter_organization} onChange={e => setProposalForm({ ...proposalForm, submitter_organization: e.target.value })} />
+                            </div>
+                          </div>
+                          <Button type="submit" size="lg" disabled={submitting}>
+                            {submitting ? 'Submitting...' : 'Submit Proposal'}
+                          </Button>
+                        </form>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                </div>
+              </Tabs>
+            </div>
+          </section>
+        </main>
+
+        <Footer />
+      </div>
+    </>
+  );
+};
+
+export default GrantMakerPortal;
